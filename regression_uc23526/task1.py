@@ -44,41 +44,41 @@ X_test_processed = np.concatenate([X_test_num_scaled, X_test_cat_encoded], axis=
 
 # Get feature names for later use
 cat_feature_names = encoder.get_feature_names_out(categorical_features)
+
+print(cat_feature_names)
+print("hdsfjldskj")
 all_feature_names = list(numeric_features) + list(cat_feature_names)
 
 # Train linear regression model
-model = LinearRegression()
-model.fit(X_train_processed, y_train)
+lin_reg = LinearRegression()
+lin_reg.fit(X_train_processed, y_train)
 
 # Make predictions
-y_train_pred = model.predict(X_train_processed)
-y_test_pred = model.predict(X_test_processed)
+y_train_pred = lin_reg.predict(X_train_processed)
+y_test_pred = lin_reg.predict(X_test_processed)
 
 # Calculate RMSE
-train_rmse = np.sqrt(mean_squared_error(y_train, y_train_pred))
-test_rmse = np.sqrt(mean_squared_error(y_test, y_test_pred))
+RMSE_train = np.sqrt(mean_squared_error(y_train, y_train_pred))
+RMSE_test = np.sqrt(mean_squared_error(y_test, y_test_pred))
 
 # Print learned coefficients
 print("Learned Coefficients:")
-print("-" * 40)
 for i, feature_name in enumerate(all_feature_names):
-    coefficient = model.coef_[i]
+    coefficient = lin_reg.coef_[i]
     print(f"{feature_name}: {coefficient:.3f}")
-print(f"\nIntercept: {model.intercept_:.3f}")
+print(f"\nIntercept: {lin_reg.intercept_:.3f}")
 
 # Print RMSE
-print("\n" + "=" * 40)
-print(f"Training RMSE: {train_rmse:.2f}")
-print(f"Test RMSE: {test_rmse:.2f}")
-print("=" * 40)
+print('\nTrain RMSE: ', round(RMSE_train, 3))
+print('Test RMSE: ', round(RMSE_test, 3))
 
 # Scatter plot: predicted vs actual charges on test set
-plt.figure(figsize=(8, 6))
-plt.scatter(y_test, y_test_pred, alpha=0.5)
-plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
-plt.xlabel('Actual Charges')
-plt.ylabel('Predicted Charges')
-plt.title('Linear Regression: Predicted vs Actual Charges (Test Set)')
-plt.grid(True, alpha=0.3)
+fig, ax = plt.subplots(figsize=(8, 6))
+ax.scatter(y_test, y_test_pred, alpha=0.5)
+ax.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
+ax.set_xlabel('Actual Charges')
+ax.set_ylabel('Predicted Charges')
+ax.set_title('Linear Regression: Predicted vs Actual Charges (Test Set)')
+ax.grid(True, alpha=0.3)
 plt.tight_layout()
 plt.show()
