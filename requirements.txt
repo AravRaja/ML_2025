@@ -1,0 +1,13 @@
+# Python dependencies for ML Coursework
+# Add required packages here as you work on the tasks
+# Example packages you may need:
+# pandas
+# numpy
+# scikit-learn
+# torch
+# pymc
+# matplotlib
+# seaborn
+# jupyter
+# hmmlearn
+
