@@ -1,0 +1,10 @@
+---
+alwaysApply: true
+Write code the way a competent university computer science student would — clean, readable, but not overly perfect or corporate. No AI tone.
+
+Code Style Expectations:
+	•	Avoid generic AI patterns or overly formal structure.
+	•	Keep the code straightforward and practical — no excessive abstraction unless the task demands it.
+	•	Variable and function names should be meaningful, but not painfully formal.
+	•	Do NOT include comments unless something genuinely unclear needs it. Comments should sound human, short, and natural.
+---

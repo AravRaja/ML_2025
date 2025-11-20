@@ -60,40 +60,50 @@ y_val_tensor = torch.FloatTensor(y_val.values).reshape(-1, 1)
 X_test_tensor = torch.FloatTensor(X_test_processed)
 y_test_tensor = torch.FloatTensor(y_test.values).reshape(-1, 1)
 
-# Define neural network architecture
+# Get input and output sizes
 input_size = X_train_processed.shape[1]
-hidden_size1 = 128
-hidden_size2 = 64
-hidden_size3 = 32
 output_size = 1
 
+# Define neural network architecture
+hidden_sizes = [256, 128, 64, 32]
+
 class NeuralNetwork(nn.Module):
-    def __init__(self):
+    def __init__(self, input_size, hidden_sizes, output_size):
         super(NeuralNetwork, self).__init__()
-        self.fc1 = nn.Linear(input_size, hidden_size1)
-        self.fc2 = nn.Linear(hidden_size1, hidden_size2)
-        self.fc3 = nn.Linear(hidden_size2, hidden_size3)
-        self.fc4 = nn.Linear(hidden_size3, output_size)
-        self.relu = nn.ReLU()
+        
+        # Build layers dynamically based on hidden_sizes
+        layers = []
+        prev_size = input_size
+        
+        for hidden_size in hidden_sizes:
+            layers.append(nn.Linear(prev_size, hidden_size))
+            prev_size = hidden_size
+        
+        # Output layer
+        layers.append(nn.Linear(prev_size, output_size))
+        
+        self.layers = nn.ModuleList(layers)
+        self.activation = nn.LeakyReLU(negative_slope=0.01)
         self.dropout = nn.Dropout(0.2)
         
     def forward(self, x):
-        x = self.relu(self.fc1(x))
-        x = self.dropout(x)
-        x = self.relu(self.fc2(x))
-        x = self.dropout(x)
-        x = self.relu(self.fc3(x))
-        x = self.fc4(x)
+        # Forward through all layers except the last one
+        for i in range(len(self.layers) - 1):
+            x = self.activation(self.layers[i](x))
+            x = self.dropout(x)  # Apply dropout after each hidden layer
+        
+        # Final layer (no activation, no dropout)
+        x = self.layers[-1](x)
         return x
 
 # Initialize model, loss function, and optimizer
-model = NeuralNetwork()
+model = NeuralNetwork(input_size, hidden_sizes, output_size)
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
 
 # Training loop with early stopping
 num_epochs = 2000
-patience = 50
+patience = 100
 best_val_loss = float('inf')
 patience_counter = 0
 train_losses = []
